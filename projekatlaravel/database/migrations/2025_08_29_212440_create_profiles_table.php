@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
               $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
             $table->text('bio')->nullable();
-            $table->string('github_url')->nullable();
-            $table->string('portfolio_url')->nullable();
+            $table->string('github_url');
+            $table->string('portfolio_url');
             $table->decimal('hourly_rate', 10, 2)->nullable();
             $table->string('location')->nullable();
             $table->timestamps();
