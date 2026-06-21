@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('freelancer_id')->constrained('users')->cascadeOnDelete();
             $table->decimal('agreed_amount', 10, 2);
             $table->timestamp('start_at')->nullable();
+             $table->text('notes')->nullable();
             $table->timestamp('end_at')->nullable();
             $table->enum('status', ['active', 'completed', 'cancelled'])->default('active')->index();
             $table->timestamps();
