@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,5 +17,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//CRUD
 Route::apiResource('skills', SkillController::class);
 Route::apiResource('contracts', ContractController::class);
+Route::apiResource('projects', ProjectController::class);
+
+// Dodatne rute za Project
+Route::patch('projects/{project}/status', [ProjectController::class, 'setStatus']);
+Route::post('projects/{project}/skills', [ProjectController::class, 'attachSkills']);
+Route::delete('projects/{project}/skills/{skill}', [ProjectController::class, 'detachSkill']);
