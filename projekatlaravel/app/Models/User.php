@@ -21,6 +21,13 @@ class User extends Authenticatable
 
     protected $casts = ['email_verified_at' => 'datetime'];
 
+
+     // Helpers za role
+    public function isAdmin(): bool { return $this->role === 'admin'; }
+    public function isClient(): bool { return $this->role === 'client'; }
+    public function isFreelancer(): bool { return $this->role === 'freelancer'; }
+
+
     // ---- Relacije
     public function profile()
     {
