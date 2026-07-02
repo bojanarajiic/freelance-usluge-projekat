@@ -4,8 +4,10 @@ use App\Http\Controllers\{
     AuthController,
     SkillController,
     ContractController,
+    IntegrationController,
     ProjectController,
     ProposalController,
+    ReportController,
     ReviewController
 };
 use Illuminate\Support\Facades\Route;
@@ -111,3 +113,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users/{user}/received-reviews', [ReviewController::class, 'indexReceivedByUser']);
     Route::get('users/{user}/given-reviews',    [ReviewController::class, 'indexGivenByUser']);
 });
+
+
+
+
+// REST servis #1: FX konverzija
+Route::get('integrations/fx/convert', [IntegrationController::class, 'fxConvert']);
+
+// REST servis #2: Avatari
+Route::get('integrations/avatar/url',   [IntegrationController::class, 'avatarUrl']);
+Route::get('integrations/avatar/image', [IntegrationController::class, 'avatarRedirect']);
+
+// OBRAĐENI podaci na osnovu javnog servisa (FX) + naših ugovora
+Route::get('reports/contracts/fx-summary', [ReportController::class, 'contractsFxSummary']);
