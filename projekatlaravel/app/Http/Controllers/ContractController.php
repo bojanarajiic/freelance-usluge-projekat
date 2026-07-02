@@ -34,27 +34,28 @@ class ContractController extends Controller
     /**
      * POST /api/contracts
      */
-    public function store(Request $request)
+   public function store(Request $request)
     {
         $data = $request->validate([
             'project_id'    => ['required', 'exists:projects,id', 'unique:contracts,project_id'],
             'freelancer_id' => ['required', 'exists:users,id'],
             'agreed_amount' => ['required', 'numeric', 'min:0'],
+            'currency'      => ['nullable','string','size:3'], // <— DODATO
             'status'        => ['nullable', Rule::in(['active', 'completed', 'cancelled'])],
             'start_at'      => ['nullable', 'date'],
             'end_at'        => ['nullable', 'date', 'after_or_equal:start_at'],
         ]);
 
-        // default status ako nije prosleđen
-        $data['status'] = $data['status'] ?? 'active';
+        $data['status']   = $data['status'] ?? 'active';
+        $data['currency'] = strtoupper($data['currency'] ?? 'EUR'); 
 
         $contract = Contract::create($data)->load(['project:id,title,budget', 'freelancer:id,name']);
 
         return ContractResource::make($contract)
             ->additional(['message' => 'Contract created'])
-            ->response()
-            ->setStatusCode(201);
+            ->response()->setStatusCode(201);
     }
+
 
     /**
      * GET /api/contracts/{contract}
@@ -72,16 +73,18 @@ class ContractController extends Controller
     public function update(Request $request, Contract $contract)
     {
         $data = $request->validate([
-            'project_id'    => [
-                'sometimes', 'required', 'exists:projects,id',
-                Rule::unique('contracts', 'project_id')->ignore($contract->id),
-            ],
-            'freelancer_id' => ['sometimes', 'required', 'exists:users,id'],
-            'agreed_amount' => ['sometimes', 'required', 'numeric', 'min:0'],
-            'status'        => ['sometimes', 'required', Rule::in(['active', 'completed', 'cancelled'])],
-            'start_at'      => ['nullable', 'date'],
-            'end_at'        => ['nullable', 'date', 'after_or_equal:start_at'],
+            'project_id'    => ['sometimes','required','exists:projects,id', Rule::unique('contracts','project_id')->ignore($contract->id)],
+            'freelancer_id' => ['sometimes','required','exists:users,id'],
+            'agreed_amount' => ['sometimes','required','numeric','min:0'],
+            'currency'      => ['sometimes','required','string','size:3'], // <— DODATO
+            'status'        => ['sometimes','required', Rule::in(['active','completed','cancelled'])],
+            'start_at'      => ['nullable','date'],
+            'end_at'        => ['nullable','date','after_or_equal:start_at'],
         ]);
+
+        if (isset($data['currency'])) {
+            $data['currency'] = strtoupper($data['currency']); 
+        }
 
         $contract->update($data);
         $contract->load(['project:id,title,budget', 'freelancer:id,name']);
@@ -89,6 +92,7 @@ class ContractController extends Controller
         return ContractResource::make($contract)
             ->additional(['message' => 'Contract updated']);
     }
+
 
     /**
      * DELETE /api/contracts/{contract}

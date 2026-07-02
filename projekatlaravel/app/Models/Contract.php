@@ -14,7 +14,7 @@ class Contract extends Model
 
     protected $fillable = [
         'project_id', 'freelancer_id', 'agreed_amount',
-        'start_at', 'end_at', 'status'
+        'start_at', 'end_at', 'status', 'currency'
     ];
 
     protected $casts = [

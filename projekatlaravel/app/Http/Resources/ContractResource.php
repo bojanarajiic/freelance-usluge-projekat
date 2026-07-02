@@ -19,6 +19,7 @@ class ContractResource extends JsonResource
             'project_id'    => $this->project_id,
             'freelancer_id' => $this->freelancer_id,
             'agreed_amount' => $this->agreed_amount,
+             'currency' => $this->currency,
             'status'        => $this->status,
             'start_at'      => $this->start_at,
             'end_at'        => $this->end_at,
