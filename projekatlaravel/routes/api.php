@@ -8,10 +8,11 @@ use App\Http\Controllers\{
     ProjectController,
     ProposalController,
     ReportController,
-    ReviewController
+    ReviewController,
+    PasswordResetController
 };
 use Illuminate\Support\Facades\Route;
-
+ 
 /*
 |--------------------------------------------------------------------------
 | PUBLIC (bez autentikacije)
@@ -124,3 +125,12 @@ Route::get('integrations/avatar/url', [IntegrationController::class, 'avatarUrl'
 
 // OBRAĐENI podaci (FX + contracts iz baze)
 Route::get('reports/contracts/fx-summary', [ReportController::class, 'contractsFxSummary']);
+
+
+
+
+Route::post('auth/forgot-password', [PasswordResetController::class, 'sendLink'])
+     ->middleware('throttle:5,1'); // max 5/min
+
+Route::post('auth/reset-password',  [PasswordResetController::class, 'reset'])
+     ->middleware('throttle:10,1');
