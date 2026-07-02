@@ -69,4 +69,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class, 'reviewee_id');
     }
+
+
+
+      // Automatski dodaj polja u JSON odgovore
+    protected $appends = ['avatar_url', 'avatar_fallback_url'];
+
+    public function getAvatarUrlAttribute(): string
+    {
+        $email = strtolower(trim($this->email ?? ''));
+        $hash  = md5($email);
+        // Gravatar (javni servis, bez ključa)
+        return "https://www.gravatar.com/avatar/{$hash}?s=128&d=identicon";
+    }
+
+    public function getAvatarFallbackUrlAttribute(): string
+    {
+        // DiceBear kao besplatan fallback (seed = ime pre @, ili id)
+        $seed = $this->name ?: ($this->id ?? 'user');
+        return "https://api.dicebear.com/7.x/identicon/svg?seed=" . urlencode($seed);
+    }
 }

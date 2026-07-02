@@ -52,18 +52,6 @@ class IntegrationController extends Controller
             'source' => 'gravatar.com | dicebear.com'
         ]);
     }
+ 
 
-    // (opciono) redirect direktno na sliku avatara (HTTP 302)
-    // GET /integrations/avatar/image?email=a@b.com&size=128
-    public function avatarRedirect(Request $r)
-    {
-        $r->validate([
-            'email' => 'required|email',
-            'size'  => 'nullable|integer|min:24|max:512',
-        ]);
-        $size = $r->integer('size', 128);
-        $hash = md5(strtolower(trim($r->input('email'))));
-        $url  = "https://www.gravatar.com/avatar/{$hash}?s={$size}&d=identicon";
-        return redirect()->away($url, Response::HTTP_FOUND);
-    }
 }

@@ -23,7 +23,8 @@ class UserResource extends JsonResource
             'orcid'       => $this->orcid,
             'created_at'  => $this->created_at,
             'updated_at'  => $this->updated_at,
-
+             'avatar_url'           => $this->avatar_url,           // gravatar
+            'avatar_fallback_url'  => $this->avatar_fallback_url,  // dicebear
             'profile'     => new ProfileResource($this->whenLoaded('profile')),
             'skills'      => SkillResource::collection($this->whenLoaded('skills')),
         ];

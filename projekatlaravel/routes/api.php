@@ -116,13 +116,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-
 // REST servis #1: FX konverzija
 Route::get('integrations/fx/convert', [IntegrationController::class, 'fxConvert']);
 
-// REST servis #2: Avatari
-Route::get('integrations/avatar/url',   [IntegrationController::class, 'avatarUrl']);
-Route::get('integrations/avatar/image', [IntegrationController::class, 'avatarRedirect']);
+// REST servis #2: Avatar (dovoljna je ova JSON varijanta)
+Route::get('integrations/avatar/url', [IntegrationController::class, 'avatarUrl']);
 
-// OBRAĐENI podaci na osnovu javnog servisa (FX) + naših ugovora
+// OBRAĐENI podaci (FX + contracts iz baze)
 Route::get('reports/contracts/fx-summary', [ReportController::class, 'contractsFxSummary']);
