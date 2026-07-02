@@ -6,6 +6,8 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Skill;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
@@ -115,13 +117,59 @@ class ProjectController extends Controller
 
     /**
      * DELETE /api/projects/{project}
+     * Briše projekat i sve povezane entitete u jednoj transakciji.
      */
     public function destroy(Project $project)
     {
-        $project->delete();
+        // Učitaj šta ćemo brisati (samo minimalna polja radi performansi)
+        $project->load([
+            'reviews:id,project_id',
+            'proposals:id,project_id',
+            'contract:id,project_id',
+            'skills:id'
+        ]);
 
-        return response()->json(['message' => 'Project deleted']);
+        return DB::transaction(function () use ($project) {
+            // Brojači/flagovi za odgovor
+            $deletedReviews   = $project->reviews->count();
+            $deletedProposals = $project->proposals->count();
+            $hadContract      = $project->contract !== null;
+            $detachedSkills   = $project->skills->count();
+ 
+
+            // 1) povezani entiteti (ručno, ne oslanjamo se na FK kaskade)
+            if ($deletedReviews > 0) {
+                \App\Models\Review::where('project_id', $project->id)->delete();
+            }
+
+            if ($deletedProposals > 0) {
+                \App\Models\Proposal::where('project_id', $project->id)->delete();
+            }
+
+            if ($hadContract) {
+                $project->contract()->delete();
+            }
+
+            if ($detachedSkills > 0) {
+                $project->skills()->detach();
+            }
+
+            // 2) na kraju — sam projekat
+            $project->delete();
+
+            // 3) jasan JSON odgovor
+            return response()->json([
+                'message' => 'Project and related data deleted in a single transaction',
+                'deleted' => [
+                    'reviews'          => $deletedReviews,
+                    'proposals'        => $deletedProposals,
+                    'contract_deleted' => (bool) $hadContract,
+                    'skills_detached'  => $detachedSkills,
+                ],
+            ]);
+        });
     }
+
 
     /**
      * PATCH /api/projects/{project}/status
