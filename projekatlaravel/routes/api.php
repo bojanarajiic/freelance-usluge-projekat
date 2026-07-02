@@ -102,10 +102,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ZA SVE ULOGE (ali ulogu proverava Policy)
+    | ZA SVE ULOGE 
     |--------------------------------------------------------------------------
     */
-    // Potpun pristup pregledima (listanje, filtriranje) — Policy odlučuje šta se vidi
+
     Route::apiResource('proposals', ProposalController::class)->only(['index', 'show']);
     Route::apiResource('contracts', ContractController::class)->only(['index', 'show']);
     Route::get('users/{user}/received-reviews', [ReviewController::class, 'indexReceivedByUser']);

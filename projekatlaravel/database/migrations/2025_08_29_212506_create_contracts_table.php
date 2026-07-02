@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
               $table->id();
-            $table->foreignId('project_id')->unique()->constrained()->cascadeOnDelete();
-            $table->foreignId('freelancer_id')->constrained('users')->cascadeOnDelete();
+           $table->unsignedBigInteger('project_id')->unique();
+            $table->unsignedBigInteger('freelancer_id');
             $table->decimal('agreed_amount', 10, 2);
             $table->timestamp('start_at')->nullable();
              $table->text('notes')->nullable();
