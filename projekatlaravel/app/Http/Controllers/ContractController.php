@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ContractResource;
 use App\Models\Contract;
+use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class ContractController extends Controller
@@ -19,7 +21,7 @@ class ContractController extends Controller
         $status  = $request->input('status');
 
         $query = Contract::query()
-            ->with(['project:id,title,budget', 'freelancer:id,name'])
+            ->with(['project:id,title', 'freelancer:id,name'])
             ->latest('id');
 
         if ($status) {
@@ -35,26 +37,47 @@ class ContractController extends Controller
      * POST /api/contracts
      */
    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'project_id'    => ['required', 'exists:projects,id', 'unique:contracts,project_id'],
-            'freelancer_id' => ['required', 'exists:users,id'],
-            'agreed_amount' => ['required', 'numeric', 'min:0'],
-            'currency'      => ['nullable','string','size:3'], // <— DODATO
-            'status'        => ['nullable', Rule::in(['active', 'completed', 'cancelled'])],
-            'start_at'      => ['nullable', 'date'],
-            'end_at'        => ['nullable', 'date', 'after_or_equal:start_at'],
-        ]);
+{
+    $v = Validator::make($request->all(), [
+        'project_id'    => ['required', 'exists:projects,id', 'unique:contracts,project_id'],
+        'freelancer_id' => ['required', 'exists:users,id'],
+        'agreed_amount' => ['required', 'numeric', 'min:0'],
+        'currency'      => ['nullable','string','size:3'],
+        'status'        => ['nullable', Rule::in(['active', 'completed', 'cancelled'])],
+        'start_at'      => ['nullable','date'],
+        'end_at'        => ['nullable','date','after_or_equal:start_at'],
+    ]);
 
-        $data['status']   = $data['status'] ?? 'active';
-        $data['currency'] = strtoupper($data['currency'] ?? 'EUR'); 
+    if ($v->fails()) {
+        // Jasan odgovor sa svim porukama
+        return response()->json([
+            'message' => 'Validation failed',
+            'errors'  => $v->errors(),     // { field: [poruke...] }
+        ], 422);
+    }
 
-        $contract = Contract::create($data)->load(['project:id,title,budget', 'freelancer:id,name']);
+    $data = $v->validated();
+    $data['status']   = $data['status'] ?? 'active';
+    $data['currency'] = strtoupper($data['currency'] ?? 'EUR');
+
+    try {
+        $contract = Contract::create($data)
+            ->load(['project:id,title', 'freelancer:id,name']);
 
         return ContractResource::make($contract)
             ->additional(['message' => 'Contract created'])
-            ->response()->setStatusCode(201);
+            ->response()
+            ->setStatusCode(201);
+
+    } catch (QueryException $e) {
+        // Npr. unique constraint na project_id ili drugi DB problem
+        return response()->json([
+            'message' => 'Database error while creating contract',
+            'error'   => $e->getCode(),
+            'detail'  => config('app.debug') ? $e->getMessage() : null,
+        ], 500);
     }
+}
 
 
     /**
@@ -62,7 +85,7 @@ class ContractController extends Controller
      */
     public function show(Contract $contract)
     {
-        $contract->load(['project:id,title,budget', 'freelancer:id,name']);
+        $contract->load(['project:id,title', 'freelancer:id,name']);
 
         return ContractResource::make($contract);
     }

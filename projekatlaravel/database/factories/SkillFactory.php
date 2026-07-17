@@ -13,10 +13,11 @@ class SkillFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->randomElement([
-                'PHP','Laravel','MySQL','JavaScript','React','Vue',
-                'Node.js','Docker','Git','CI/CD','REST','Linux'
-            ]),
+           'name' => $this->faker->unique()->randomElement([
+            'PHP','Laravel','MySQL','JavaScript','React','Vue',
+            'Node.js','Docker','Git','CI/CD','REST','Linux',
+            'TypeScript','PostgreSQL','Redis','Kubernetes','AWS'
+        ]),
         ];
     }
 }

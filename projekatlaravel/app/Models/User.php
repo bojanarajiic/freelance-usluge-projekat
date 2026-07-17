@@ -14,9 +14,9 @@ class User extends Authenticatable
     public const ROLE_CLIENT = 'client';
     public const ROLE_FREELANCER = 'freelancer';
 
-    protected $fillable = [
-        'name', 'email', 'password', 'role'
-    ];
+        protected $fillable = [
+            'name','email','password','role','affiliation','orcid'
+        ];
 
     protected $hidden = ['password', 'remember_token'];
 

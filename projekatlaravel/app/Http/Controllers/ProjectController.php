@@ -121,7 +121,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        // Učitaj šta ćemo brisati (samo minimalna polja radi performansi)
+         
         $project->load([
             'reviews:id,project_id',
             'proposals:id,project_id',
@@ -130,14 +130,14 @@ class ProjectController extends Controller
         ]);
 
         return DB::transaction(function () use ($project) {
-            // Brojači/flagovi za odgovor
+           
             $deletedReviews   = $project->reviews->count();
             $deletedProposals = $project->proposals->count();
             $hadContract      = $project->contract !== null;
             $detachedSkills   = $project->skills->count();
  
 
-            // 1) povezani entiteti (ručno, ne oslanjamo se na FK kaskade)
+           
             if ($deletedReviews > 0) {
                 \App\Models\Review::where('project_id', $project->id)->delete();
             }
@@ -154,10 +154,9 @@ class ProjectController extends Controller
                 $project->skills()->detach();
             }
 
-            // 2) na kraju — sam projekat
+            
             $project->delete();
-
-            // 3) jasan JSON odgovor
+ 
             return response()->json([
                 'message' => 'Project and related data deleted in a single transaction',
                 'deleted' => [

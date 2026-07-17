@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('project_skill', function (Blueprint $table) {
-           
-              $table->foreignId('project_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('skill_id')->constrained()->cascadeOnDelete();
-            $table->primary(['project_id', 'skill_id']);
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+             $table->string('affiliation')->nullable()->after('role');
+        $table->string('orcid', 50)->nullable()->after('affiliation');
         });
     }
 
@@ -29,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_skill');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['affiliation','orcid']);
+        });
     }
 };

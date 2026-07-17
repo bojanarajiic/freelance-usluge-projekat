@@ -33,6 +33,7 @@ Route::apiResource('skills', SkillController::class)->only(['index', 'show']);
 Route::get('projects/{project}/reviews',        [ReviewController::class, 'indexByProject']);
 Route::get('projects/{project}/reviews/stats',  [ReviewController::class, 'statsForProject']);
 
+  
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Uobičajene zaštićene rute dostupne svim ulogama (autorizacija fino ide kroz Policy)
     Route::apiResource('contracts', ContractController::class)->only(['index', 'show']);
     Route::apiResource('reviews',   ReviewController::class)->only(['store', 'show', 'update', 'destroy']);
-
+    
     /*
     |--------------------------------------------------------------------------
     | ADMIN (sistemska administracija)
@@ -56,7 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::middleware('role:admin')->group(function () {
         // Puni CRUD nad veštinama
-        Route::apiResource('skills', SkillController::class)->except(['index', 'show']);
+          Route::post('skills',  [SkillController::class, 'store']);
+          Route::put('skills/{id}',  [SkillController::class, 'update']);
+          Route::delete('skills/{id}',  [SkillController::class, 'destroy']);
 
         // (opciono) admin može sve nad ugovorima/projektima/proposalima:
         // Route::apiResource('contracts', ContractController::class);
@@ -87,7 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('projects/{project}/proposals/{proposal}/reject', [ProposalController::class, 'reject']);
 
         // (opciono) pregled/izmene ugovora proisteklih iz njegovih projekata
-        Route::apiResource('contracts', ContractController::class)->only(['update', 'destroy']);
+       Route::apiResource('contracts', ContractController::class)->only(['store', 'update', 'destroy']);
     });
 
     /*
@@ -99,8 +102,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Freelancer šalje/menja/otkazuje svoje ponude
         Route::apiResource('proposals', ProposalController::class)->only(['store', 'update', 'destroy']);
 
-        // (opciono) pregled sopstvenih ponuda kroz /proposals?freelancer_id=me — rešava Policy
-        // (opciono) pregled svojih ugovora/recenzija preko /contracts, /reviews — ograničeno Policy-jem
+
     });
 
     /*

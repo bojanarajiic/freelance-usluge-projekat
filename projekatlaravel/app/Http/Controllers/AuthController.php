@@ -22,10 +22,9 @@ class AuthController extends Controller
             'orcid'       => ['nullable','string','max:50'],
         ]);
 
-        $user = User::create([
-            ...$data,
+        $user = User::create(array_merge($data, [
             'password' => Hash::make($data['password']),
-        ]);
+        ]));
 
         $token = $user->createToken('api-token')->plainTextToken;
 

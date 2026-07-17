@@ -10,12 +10,12 @@ class ReportController extends Controller
 {
     // GET /reports/contracts/fx-summary?to=RSD
     // Sabira/računa statistiku nad contracts.agreed_amount konvertovanih u ciljnu valutu.
-    // Ako nemaš kolonu 'currency' u contracts, tretira sve kao EUR (adjust po potrebi).
+
     public function contractsFxSummary(Request $r, CurrencyService $fx)
     {
         $target = strtoupper($r->query('to', 'EUR'));
 
-        // Ako već imaš currency kolonu, povuci je; ovde pretpostavimo EUR kao izvor
+
         $contracts = Contract::query()->select(['id','agreed_amount'])->get();
 
         $converted = $contracts->map(fn($c) => $fx->convert((float)$c->agreed_amount, 'EUR', $target));

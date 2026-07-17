@@ -27,8 +27,7 @@ class UserFactory extends Factory
 
             // polja iz tvog User modela prema ranijem kontekstu
             'role'        => $role,
-            'affiliation' => $this->faker->optional()->company(),
-            'orcid'       => $this->faker->optional()->regexify('0000-000[0-9]-[0-9]{4}-[0-9]{3}[0-9X]'),
+           
         ];
     }
 }

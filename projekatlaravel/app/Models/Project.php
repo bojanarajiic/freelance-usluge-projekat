@@ -45,4 +45,10 @@ class Project extends Model
     {
         return $this->hasOne(Contract::class);
     }
+       public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+   
 }

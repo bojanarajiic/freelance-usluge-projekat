@@ -24,7 +24,7 @@ class ProposalController extends Controller
         $freelancerId  = $request->input('freelancer_id');
 
         $query = Proposal::query()
-            ->with(['project:id,title,budget,status', 'freelancer:id,name'])
+            ->with(['project:id,title,status', 'freelancer:id,name'])
             ->latest('id');
 
         if ($status) {
@@ -51,7 +51,7 @@ class ProposalController extends Controller
         $perPage = (int) $request->input('per_page', 15);
 
         $proposals = $project->proposals()
-            ->with(['project:id,title,budget,status', 'freelancer:id,name'])
+            ->with(['project:id,title,status', 'freelancer:id,name'])
             ->latest('id')
             ->paginate($perPage);
 
@@ -75,7 +75,7 @@ class ProposalController extends Controller
         $data['status'] = $data['status'] ?? 'pending';
 
         $proposal = Proposal::create($data)
-            ->load(['project:id,title,budget,status', 'freelancer:id,name']);
+            ->load(['project:id,title,status', 'freelancer:id,name']);
 
         return ProposalResource::make($proposal)
             ->additional(['message' => 'Proposal created'])
@@ -88,7 +88,7 @@ class ProposalController extends Controller
      */
     public function show(Proposal $proposal)
     {
-        $proposal->load(['project:id,title,budget,status', 'freelancer:id,name']);
+        $proposal->load(['project:id,title,status', 'freelancer:id,name']);
 
         return ProposalResource::make($proposal);
     }
@@ -108,7 +108,7 @@ class ProposalController extends Controller
         ]);
 
         $proposal->update($data);
-        $proposal->load(['project:id,title,budget,status', 'freelancer:id,name']);
+        $proposal->load(['project:id,title,status', 'freelancer:id,name']);
 
         return ProposalResource::make($proposal)
             ->additional(['message' => 'Proposal updated']);
@@ -141,7 +141,7 @@ class ProposalController extends Controller
             if ($existing) {
                 // samo update status proposal-a (drugi rejected ako želiš)
                 $proposal->update(['status' => 'accepted']);
-                return ProposalResource::make($proposal->fresh()->load(['project:id,title,budget,status', 'freelancer:id,name']))
+                return ProposalResource::make($proposal->fresh()->load(['project:id,title,status', 'freelancer:id,name']))
                     ->additional(['message' => 'Proposal accepted (contract already exists for project)']);
             }
 
@@ -158,9 +158,9 @@ class ProposalController extends Controller
 
             return response()->json([
                 'message'  => 'Proposal accepted and contract created',
-                'proposal' => new ProposalResource($proposal->fresh()->load(['project:id,title,budget,status', 'freelancer:id,name'])),
+                'proposal' => new ProposalResource($proposal->fresh()->load(['project:id,title,status', 'freelancer:id,name'])),
                 'contract' => new \App\Http\Resources\ContractResource(
-                    $contract->load(['project:id,title,budget', 'freelancer:id,name'])
+                    $contract->load(['project:id,title', 'freelancer:id,name'])
                 ),
             ]);
         });
@@ -177,7 +177,7 @@ class ProposalController extends Controller
 
         $proposal->update(['status' => 'rejected']);
 
-        return ProposalResource::make($proposal->fresh()->load(['project:id,title,budget,status', 'freelancer:id,name']))
+        return ProposalResource::make($proposal->fresh()->load(['project:id,title,status', 'freelancer:id,name']))
             ->additional(['message' => 'Proposal rejected']);
     }
 }

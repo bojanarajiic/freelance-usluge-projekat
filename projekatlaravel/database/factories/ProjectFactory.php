@@ -25,7 +25,7 @@ class ProjectFactory extends Factory
             'client_id'   => User::factory()->state(['role' => User::ROLE_CLIENT ?? 'client']),
             'title'       => $this->faker->sentence(5),
             'description' => $this->faker->paragraph(),
-            'budget'      => $this->faker->randomFloat(2, 100, 10000),
+         
             'status'      => $status,
              
         ];
