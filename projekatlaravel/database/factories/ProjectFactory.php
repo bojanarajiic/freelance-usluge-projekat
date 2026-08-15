@@ -21,7 +21,7 @@ class ProjectFactory extends Factory
         ]);
 
         return [
-            // pretpostavka: projekat ima client_id
+          
             'client_id'   => User::factory()->state(['role' => User::ROLE_CLIENT ?? 'client']),
             'title'       => $this->faker->sentence(5),
             'description' => $this->faker->paragraph(),

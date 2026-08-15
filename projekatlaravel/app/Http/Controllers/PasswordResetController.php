@@ -42,7 +42,7 @@ class PasswordResetController extends Controller
                     'remember_token' => Str::random(60),
                 ])->save();
 
-                // (Preporuka) Poništi sve postojeće API tokene (Sanctum) nakon reseta:
+                // Poništi sve postojeće API tokene (Sanctum) nakon reseta:
                 if (method_exists($user, 'tokens')) {
                     $user->tokens()->delete();
                 }

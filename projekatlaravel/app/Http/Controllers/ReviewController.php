@@ -26,7 +26,7 @@ class ReviewController extends Controller
 
         $query = Review::query()
             ->with([
-                'project:id,title,budget,status',
+                'project:id,title,status',
                 'reviewer:id,name',
                 'reviewee:id,name',
             ])
@@ -58,7 +58,7 @@ class ReviewController extends Controller
         $perPage = (int) $request->input('per_page', 15);
 
         $reviews = $project->reviews()
-            ->with(['project:id,title,budget,status', 'reviewer:id,name', 'reviewee:id,name'])
+            ->with(['project:id,title,status', 'reviewer:id,name', 'reviewee:id,name'])
             ->latest('id')
             ->paginate($perPage);
 
@@ -74,7 +74,7 @@ class ReviewController extends Controller
         $perPage = (int) $request->input('per_page', 15);
 
         $reviews = Review::where('reviewee_id', $user->id)
-            ->with(['project:id,title,budget,status', 'reviewer:id,name', 'reviewee:id,name'])
+            ->with(['project:id,title,status', 'reviewer:id,name', 'reviewee:id,name'])
             ->latest('id')
             ->paginate($perPage);
 
@@ -90,7 +90,7 @@ class ReviewController extends Controller
         $perPage = (int) $request->input('per_page', 15);
 
         $reviews = Review::where('reviewer_id', $user->id)
-            ->with(['project:id,title,budget,status', 'reviewer:id,name', 'reviewee:id,name'])
+            ->with(['project:id,title,status', 'reviewer:id,name', 'reviewee:id,name'])
             ->latest('id')
             ->paginate($perPage);
 
@@ -111,7 +111,7 @@ class ReviewController extends Controller
         ]);
 
         $review = Review::create($data)
-            ->load(['project:id,title,budget,status', 'reviewer:id,name', 'reviewee:id,name']);
+            ->load(['project:id,title,status', 'reviewer:id,name', 'reviewee:id,name']);
 
         return ReviewResource::make($review)
             ->additional(['message' => 'Review created'])
@@ -124,7 +124,7 @@ class ReviewController extends Controller
      */
     public function show(Review $review)
     {
-        $review->load(['project:id,title,budget,status', 'reviewer:id,name', 'reviewee:id,name']);
+        $review->load(['project:id,title,status', 'reviewer:id,name', 'reviewee:id,name']);
 
         return ReviewResource::make($review);
     }
@@ -143,7 +143,7 @@ class ReviewController extends Controller
         ]);
 
         $review->update($data);
-        $review->load(['project:id,title,budget,status', 'reviewer:id,name', 'reviewee:id,name']);
+        $review->load(['project:id,title,status', 'reviewer:id,name', 'reviewee:id,name']);
 
         return ReviewResource::make($review)
             ->additional(['message' => 'Review updated']);

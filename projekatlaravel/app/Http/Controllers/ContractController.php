@@ -110,7 +110,7 @@ class ContractController extends Controller
         }
 
         $contract->update($data);
-        $contract->load(['project:id,title,budget', 'freelancer:id,name']);
+        $contract->load(['project:id,title', 'freelancer:id,name']);
 
         return ContractResource::make($contract)
             ->additional(['message' => 'Contract updated']);
