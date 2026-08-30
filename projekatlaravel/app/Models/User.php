@@ -73,8 +73,8 @@ class User extends Authenticatable
 
 
 
-      // Automatski dodaj polja u JSON odgovore
-    protected $appends = ['avatar_url', 'avatar_fallback_url'];
+      // Automatski dodaj polja u JSON odgovore, kada se user registruje automatski se za njega dodaje avatar
+    protected $appends = ['avatar_url'];
 
     public function getAvatarUrlAttribute(): string
     {
@@ -84,10 +84,5 @@ class User extends Authenticatable
         return "https://www.gravatar.com/avatar/{$hash}?s=128&d=identicon";
     }
 
-    public function getAvatarFallbackUrlAttribute(): string
-    {
-        // DiceBear kao besplatan fallback (seed = ime pre @, ili id)
-        $seed = $this->name ?: ($this->id ?? 'user');
-        return "https://api.dicebear.com/7.x/identicon/svg?seed=" . urlencode($seed);
-    }
+ 
 }

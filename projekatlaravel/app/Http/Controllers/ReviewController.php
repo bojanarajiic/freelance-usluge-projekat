@@ -159,31 +159,5 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review deleted']);
     }
 
-    /**
-     * GET /api/projects/{project}/reviews/stats
-     * Statistika: prosek, broj, raspodela po ocenama 1..5
-     */
-    public function statsForProject(Project $project)
-    {
-        $base = $project->reviews()->selectRaw('count(*) as total, avg(rating) as avg_rating')->first();
-
-        $byRating = $project->reviews()
-            ->selectRaw('rating, count(*) as count')
-            ->groupBy('rating')
-            ->pluck('count', 'rating')
-            ->all();
-
-        // normalizuj 1..5
-        $distribution = [];
-        for ($i = 1; $i <= 5; $i++) {
-            $distribution[$i] = (int) ($byRating[$i] ?? 0);
-        }
-
-        return response()->json([
-            'project_id'   => $project->id,
-            'total'        => (int) ($base->total ?? 0),
-            'avg_rating'   => $base->avg_rating ? round((float) $base->avg_rating, 2) : null,
-            'distribution' => $distribution,
-        ]);
-    }
+   
 }

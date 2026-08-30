@@ -7,7 +7,7 @@ use App\Http\Controllers\{
     IntegrationController,
     ProjectController,
     ProposalController,
-    ReportController,
+ 
     ReviewController,
     PasswordResetController
 };
@@ -121,12 +121,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // REST servis #1: FX konverzija
 Route::get('integrations/fx/convert', [IntegrationController::class, 'fxConvert']);
-
-// REST servis #2: Avatar (dovoljna je ova JSON varijanta)
-Route::get('integrations/avatar/url', [IntegrationController::class, 'avatarUrl']);
-
-// OBRAĐENI podaci (FX + contracts iz baze)
-Route::get('reports/contracts/fx-summary', [ReportController::class, 'contractsFxSummary']);
 
 
 
