@@ -7,12 +7,13 @@ use App\Http\Controllers\{
     IntegrationController,
     ProjectController,
     ProposalController,
- 
+    ReportController,
+
     ReviewController,
     PasswordResetController
 };
 use Illuminate\Support\Facades\Route;
- 
+
 /*
 |--------------------------------------------------------------------------
 | PUBLIC (bez autentikacije)
@@ -33,7 +34,7 @@ Route::apiResource('skills', SkillController::class)->only(['index', 'show']);
 Route::get('projects/{project}/reviews',        [ReviewController::class, 'indexByProject']);
 Route::get('projects/{project}/reviews/stats',  [ReviewController::class, 'statsForProject']);
 
-  
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Uobičajene zaštićene rute dostupne svim ulogama (autorizacija fino ide kroz Policy)
     Route::apiResource('contracts', ContractController::class)->only(['index', 'show']);
     Route::apiResource('reviews',   ReviewController::class)->only(['store', 'show', 'update', 'destroy']);
-    
+
     /*
     |--------------------------------------------------------------------------
     | ADMIN (sistemska administracija)
@@ -107,7 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ZA SVE ULOGE 
+    | ZA SVE ULOGE
     |--------------------------------------------------------------------------
     */
 
@@ -121,6 +122,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // REST servis #1: FX konverzija
 Route::get('integrations/fx/convert', [IntegrationController::class, 'fxConvert']);
+// REST servis: FX izveštaj po valutama ugovora
+Route::get('reports/contracts/fx-summary', [ReportController::class, 'fxSummary']);
 
 
 
